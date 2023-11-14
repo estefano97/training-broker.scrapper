@@ -104,6 +104,7 @@ while True:
                 if page_text.replace(" ", "").__contains__(termino_busqueda.replace(" ", "")):
                     is_finded = 1
 
-        #print(items_finish_list)
+        print(items_finish_list)
+        items_finish_list = []
 
     fecha_anterior = obtener_siguiente_dia(fecha_anterior)
