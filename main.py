@@ -2,6 +2,10 @@ import PyPDF2
 import re
 import requests
 from datetime import datetime, timedelta
+import locale
+
+# Configurar la localización en español
+locale.setlocale(locale.LC_TIME, 'es_ES.utf-8')
 
 def _get_value_precio_teorico(list):
     for x in list:
@@ -33,18 +37,19 @@ def obtener_siguiente_dia(fecha_texto):
 
     return siguiente_dia_texto
 
-fecha_anterior = "13Enero11"
+fecha_anterior = "03Enero11"
+items_finish_list = []
+is_finded = 0
+termino_busqueda = "INDICADORESDEMERCADOACCIONARIO"
+termino_split = "Unitario Alto Bajo % miles de US$ % (veces) financiera"
+
+
 while True:
-    print("La fecha a consultar es: ", fecha_anterior)
-    items_finish_list = []
-    is_finded = 0
-    termino_busqueda = "INDICADORESDEMERCADOACCIONARIO"
-    termino_split = "Unitario Alto Bajo % miles de US$ % (veces) financiera"
-    pdf_name = fecha_anterior  + ".pdf"
+    pdf_name = fecha_anterior + ".pdf"
     url_pdf = "http://www.bolsadevaloresguayaquil.com/boletines/alcierre/" + pdf_name
-
+    print("La fecha a consultar es: ", fecha_anterior)
     response = requests.get(url_pdf, verify=False)
-
+    print("la request a ", fecha_anterior, " resulto ser: ", response.status_code)
     if response.status_code != 200:
         print("No se encontro el archivo!")
 
@@ -71,10 +76,10 @@ while True:
                         if len(item[0]) == 0:
                             print("Espacio vacio")
                         else:
-                            print("Titulo: ", item[0])
+                            #print("Titulo: ", item[0])
                             temp_industria = item[0]
                     else:
-                        print("Item: ", item)
+                        #print("Item: ", item)
                         items_finish_list.append({
                             "emisor": item[0],
                             "valorNominalUnitario": item[1],
@@ -99,6 +104,6 @@ while True:
                 if page_text.replace(" ", "").__contains__(termino_busqueda.replace(" ", "")):
                     is_finded = 1
 
-        print(items_finish_list)
+        #print(items_finish_list)
 
-    pdf_name = obtener_siguiente_dia(fecha_anterior)
+    fecha_anterior = obtener_siguiente_dia(fecha_anterior)
